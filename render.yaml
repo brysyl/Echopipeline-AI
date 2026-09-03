@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: echopipeline-ai
+    runtime: docker
+    region: oregon
+    plan: free
+    healthCheckPath: /health
+    
+    # Docker configuration
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./
+    
+    # Environment variables for free tier
+    env:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: LOG_LEVEL
+        value: INFO
+      - key: DEBUG
+        value: "false"
+      - key: MOCK_MODE
+        value: "true"
+      - key: PARSER_FALLBACK_ONLY
+        value: "true"
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 8000
+    
+    # Secret environment variables (set via Render dashboard)
+    envVars:
+      - key: SUPABASE_URL
+        value: ${SUPABASE_URL}
+      - key: SUPABASE_KEY
+        value: ${SUPABASE_KEY}
+      - key: GROQ_API_KEY
+        value: ${GROQ_API_KEY}
+      - key: AWS_REGION
+        value: ${AWS_REGION}
+      - key: AWS_ACCESS_KEY_ID
+        value: ${AWS_ACCESS_KEY_ID}
+      - key: AWS_SECRET_ACCESS_KEY
+        value: ${AWS_SECRET_ACCESS_KEY}
+    
+    # Auto-deploy on push to main
+    autoDeploy: true
+    
+    # Graceful shutdown
+    preDeployCommand: null
+    postDeployCommand: null
