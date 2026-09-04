@@ -560,7 +560,7 @@ Open Source (MIT). See LICENSE file.
 Below is live production proof of the **Sparklenet Bot** broadcasting real-time multi-step Grok reasoning cycles directly to `#echopipeline_alerts`:
 
 ---
-![Real-Time Grok Reasoning test Alert](app/static/images/Echoalert.jpg)
+![Real-Time Grok Reasoning test Alert](app/static/Echoalert.jpg)
 
 
 ---
