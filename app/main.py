@@ -27,18 +27,19 @@ async def lifespan(app: FastAPI):
     if db_pool:
         await db_pool.close()
 
-
-@app.get("/health")
-@app.get("/healthz")
-async def health_check():
-    return {"status": "ok", "service": "EchoPipeline-AI"}
-
+# --- Initialize App First ---
 app = FastAPI(
     title="EchoPipeline-AI",
     description="SparkleNET Executive RevOps Control Center with Grok Reasoning Engine",
     version="2.1.0",
     lifespan=lifespan
 )
+
+# --- Health Check Endpoint ---
+@app.get("/health")
+@app.get("/healthz")
+async def health_check():
+    return {"status": "ok", "service": "EchoPipeline-AI"}
 
 # --- Security Middleware ---
 async def verify_admin_api_key(x_api_key: Optional[str] = Header(None)):
@@ -270,13 +271,12 @@ async def get_logs():
         records = await conn.fetch("SELECT source, event, status, to_char(created_at, 'HH24:MI:SS') as created_at FROM public.audit_logs ORDER BY created_at DESC LIMIT 8")
     return [dict(r) for r in records]
 
-# --- Grok-Enhanced Inbound Webhook Ingestion ---
+# --- Inbound Webhook Ingestion ---
 @app.post("/api/v1/webhook/ingest")
 async def ingest_lead(payload: RIGSInput):
     status = "Qualified" if (payload.risk_score < 0.40 and payload.intent_score >= 75 and payload.growth_tier in ["Tier-1", "Enterprise"]) else "Review"
     if payload.risk_score >= 0.70: status = "Disqualified"
 
-    # Executive reasoning via Grok
     reasoning_prompt = f"Analyze lead: {payload.organization}, Risk: {payload.risk_score}, Intent: {payload.intent_score}, Tier: {payload.growth_tier}, Stakeholder: {payload.stakeholder_role}. Give a 1-sentence strategic deal verdict."
     reasoning_summary = await run_grok_reasoning(reasoning_prompt)
 
@@ -300,7 +300,7 @@ async def ingest_lead(payload: RIGSInput):
         "grok_reasoning": reasoning_summary
     }
 
-# --- Executive Grok Strategy Endpoint ---
+# --- Executive Strategy Endpoint ---
 @app.post("/api/v1/reason", dependencies=[Depends(verify_admin_api_key)])
 async def executive_reasoning(query: StrategyQuery):
     reasoning = await run_grok_reasoning(
@@ -310,7 +310,7 @@ async def executive_reasoning(query: StrategyQuery):
     await log_event("grok-reasoning-api", f"Query executed: {query.query[:50]}...", "SUCCESS")
     return {"query": query.query, "executive_reasoning": reasoning}
 
-# --- Grok-Enhanced Alexa Intent Handler ---
+# --- Alexa Intent Handler ---
 @app.post("/api/alexa/intent", dependencies=[Depends(verify_alexa_request)])
 async def handle_alexa_intent(body: AlexaWebhookBody):
     intent_name = body.request.intent.name
