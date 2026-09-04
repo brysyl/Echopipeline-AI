@@ -338,3 +338,8 @@ if __name__ == "__main__":
         reload=settings.debug,
         log_level=settings.log_level.lower()
     )
+
+
+@app.get("/")
+def health_check():
+    return {"status": "healthy", "service": "EchoPipeline-AI"}
