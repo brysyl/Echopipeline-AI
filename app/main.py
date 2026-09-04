@@ -1,5 +1,4 @@
 import os
-import json
 from pathlib import Path
 from datetime import datetime, timezone
 from contextlib import asynccontextmanager
@@ -15,7 +14,7 @@ async def lifespan(app: FastAPI):
     global db_pool
     if DATABASE_URL:
         try:
-            db_pool = await asyncpg.create_pool(DATABASE_URL, min_size=1, max_size=5)
+            db_pool = await asyncpg.create_pool(DATABASE_URL, min_size=1, max_size=3, timeout=5.0)
             async with db_pool.acquire() as conn:
                 await conn.execute("""
                     CREATE TABLE IF NOT EXISTS public.revops_metrics (
@@ -41,7 +40,7 @@ async def lifespan(app: FastAPI):
                     WHERE NOT EXISTS (SELECT 1 FROM public.revops_metrics WHERE id = 1);
                 """)
         except Exception as e:
-            print(f"Database init warning: {e}")
+            print(f"Database connection deferred: {e}")
     yield
     if db_pool:
         await db_pool.close()
@@ -50,7 +49,7 @@ app = FastAPI(title="EchoPipeline-AI", version="3.9.2-ENTERPRISE", lifespan=life
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "database": "connected" if db_pool else "fallback"}
+    return {"status": "ok", "database": "connected" if db_pool else "fallback_mode"}
 
 @app.get("/api/metrics")
 async def metrics():
@@ -90,4 +89,6 @@ async def audit_logs():
 @app.get("/", response_class=HTMLResponse)
 async def dashboard():
     html_path = Path(__file__).parent / "index.html"
-    return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
+    if html_path.exists():
+        return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
+    return HTMLResponse(content="<h1>EchoPipeline AI Control Room Active</h1>")
