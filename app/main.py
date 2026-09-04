@@ -27,6 +27,12 @@ async def lifespan(app: FastAPI):
     if db_pool:
         await db_pool.close()
 
+
+@app.get("/health")
+@app.get("/healthz")
+async def health_check():
+    return {"status": "ok", "service": "EchoPipeline-AI"}
+
 app = FastAPI(
     title="EchoPipeline-AI",
     description="SparkleNET Executive RevOps Control Center with Grok Reasoning Engine",
