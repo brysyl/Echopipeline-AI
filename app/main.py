@@ -15,21 +15,64 @@ db_pool = None
 
 class TriggerPayload(BaseModel):
     message: Optional[str] = Field(
-        default="[Grok-Agent] Autonomous qualification cycle executed successfully.",
+        default="[Dashboard] Manual Grok autonomous cycle triggered by operator.",
         description="Custom log message or alert payload to broadcast."
     )
     slack_webhook_url: Optional[str] = Field(
         default="",
         description="Optional Slack Webhook URL to override env settings for live interactive testing."
     )
+    agent: Optional[str] = Field(default="Grok-Core", description="Executing module or agent identifier.")
+    rigs_score: Optional[str] = Field(default="RIGS-A1 (Fully Verified)", description="RIGS qualification grade.")
+    leads_delta: Optional[int] = Field(default=5, description="Active lead volume change.")
+    trust_delta: Optional[float] = Field(default=1850.00, description="Settlement trust volume delta.")
 
     class Config:
         json_schema_extra = {
             "example": {
-                "message": "[Grok-Agent] Interactive test execution cycle triggered from API Docs.",
-                "slack_webhook_url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+                "message": "[Dashboard] Manual Grok autonomous cycle triggered by operator.",
+                "slack_webhook_url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+                "agent": "Grok-Core",
+                "rigs_score": "RIGS-A1 (Fully Verified)",
+                "leads_delta": 5,
+                "trust_delta": 1850.00
             }
         }
+
+async def send_rich_slack_alert(webhook_url: str, title: str, agent: str, details: str, rigs_score: str, trust_delta: float, leads_delta: int, status: str):
+    payload = {
+        "blocks": [
+            {
+                "type": "header",
+                "text": {
+                    "type": "plain_text",
+                    "text": "⚡ [SPARKLE.NET RevOps] Automated Pipeline Alert",
+                    "emoji": True
+                }
+            },
+            {
+                "type": "section",
+                "fields": [
+                    {"type": "mrkdwn", "text": f"*Event Title:*\n{title}"},
+                    {"type": "mrkdwn", "text": f"*Executing Agent:*\n`{agent}`"},
+                    {"type": "mrkdwn", "text": f"*RIGS Score:*\n*{rigs_score}*"},
+                    {"type": "mrkdwn", "text": f"*Execution Status:*\n`{status}`"},
+                    {"type": "mrkdwn", "text": f"*Leads Delta:*\n+{leads_delta} leads"},
+                    {"type": "mrkdwn", "text": f"*Trust Volume Delta:*\n+${trust_delta:,.2f}"}
+                ]
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"*Context & Reasoning Details:*\n{details}"
+                }
+            },
+            {"type": "divider"}
+        ]
+    }
+    async with httpx.AsyncClient() as client:
+        return await client.post(webhook_url, json=payload, timeout=5.0)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -121,15 +164,27 @@ async def stream_logs():
 
 @app.post("/api/v1/revops/trigger-cycle", summary="Trigger Grok RevOps Cycle & Dispatch Slack Alert")
 async def trigger_cycle(payload: TriggerPayload = TriggerPayload()):
-    msg = payload.message if payload and payload.message else "[Grok-Agent] Autonomous qualification cycle executed successfully."
+    msg = payload.message if payload and payload.message else "[Dashboard] Manual Grok autonomous cycle triggered by operator."
     target_webhook = payload.slack_webhook_url if (payload and payload.slack_webhook_url) else DEFAULT_SLACK_WEBHOOK_URL
+    agent_id = payload.agent or "Grok-Core"
+    rigs = payload.rigs_score or "RIGS-A1 (Fully Verified)"
+    t_delta = payload.trust_delta if payload.trust_delta is not None else 1850.00
+    l_delta = payload.leads_delta if payload.leads_delta is not None else 5
 
     slack_status = "SKIPPED"
     if target_webhook:
         try:
-            async with httpx.AsyncClient() as client:
-                res = await client.post(target_webhook, json={"text": f"[SPARKLE.NET RevOps] {msg}"}, timeout=5.0)
-                slack_status = "COMMITTED" if res.status_code == 200 else f"FAILED_{res.status_code}"
+            res = await send_rich_slack_alert(
+                webhook_url=target_webhook,
+                title="Grok RevOps Qualification Event",
+                agent=agent_id,
+                details=msg,
+                rigs_score=rigs,
+                trust_delta=t_delta,
+                leads_delta=l_delta,
+                status="SUCCESS"
+            )
+            slack_status = "COMMITTED" if res.status_code == 200 else f"FAILED_{res.status_code}"
         except Exception as e:
             slack_status = f"ERROR: {str(e)}"
 
@@ -140,7 +195,7 @@ async def trigger_cycle(payload: TriggerPayload = TriggerPayload()):
                 await conn.execute("INSERT INTO public.grok_slack_streams (message, status) VALUES ($1, $2)", f"[Slack-Dispatcher] Status: {slack_status}", "COMMITTED" if "COMMITTED" in slack_status else "WARNING")
                 await conn.execute(
                     "INSERT INTO public.revops_audit_logs (agent, action_type, details, rigs_score, trust_delta, status) VALUES ($1, $2, $3, $4, $5, $6)",
-                    "Grok-Core", "QUALIFICATION_CYCLE", msg, "RIGS-A1", 1850.00, "COMMITTED"
+                    agent_id, "QUALIFICATION_CYCLE", msg, rigs, t_delta, "COMMITTED"
                 )
         except Exception as e:
             print(f"DB log error: {e}")
@@ -148,7 +203,13 @@ async def trigger_cycle(payload: TriggerPayload = TriggerPayload()):
     return {
         "status": "cycle_completed",
         "message_processed": msg,
-        "slack_dispatch_status": slack_status
+        "slack_dispatch_status": slack_status,
+        "telemetry": {
+            "agent": agent_id,
+            "rigs_score": rigs,
+            "leads_delta": l_delta,
+            "trust_delta": t_delta
+        }
     }
 
 @app.get("/api/v1/revops/audit-logs", summary="Get Enterprise Audit Logs")
