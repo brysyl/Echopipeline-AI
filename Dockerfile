@@ -33,5 +33,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 # Expose port
 EXPOSE 8000
 
-# Run uvicorn server, binding to Railway's injected PORT (falls back to 8000 locally)
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Run uvicorn server, binding to Railway's injected PORT (falls back to 8000 locally) --host 0.0.0.0 --port $PORT
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port $PORT
