@@ -20,9 +20,9 @@
             <h1 class="text-sm font-bold tracking-tight text-white hidden sm:inline">EchoPipeline AI™ <span class="text-xs font-mono font-normal text-slate-400 ml-2">v3.9.2-ENTERPRISE</span></h1>
         </div>
         <div class="flex items-center space-x-2">
-            <button onclick="triggerGrokAutonomousCycle()" class="px-3 py-1.5 text-[11px] font-mono bg-indigo-600 hover:bg-indigo-500 text-white rounded-md transition shadow-lg shadow-indigo-600/20 flex items-center space-x-1.5">
+            <button id="trigger-btn" onclick="triggerGrokAutonomousCycle()" class="px-3 py-1.5 text-[11px] font-mono bg-indigo-600 hover:bg-indigo-500 text-white rounded-md transition shadow-lg shadow-indigo-600/20 flex items-center space-x-1.5 cursor-pointer">
                 <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                <span>Trigger Grok RevOps Cycle</span>
+                <span id="trigger-btn-text">Trigger Grok RevOps Cycle</span>
             </button>
             <a href="/docs" target="_blank" class="px-2.5 py-1 text-[11px] font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-md transition hidden sm:inline">API Docs</a>
         </div>
@@ -214,10 +214,25 @@
         setInterval(fetchAllTelemetry, 4000);
 
         async function triggerGrokAutonomousCycle() {
+            const btnText = document.getElementById('trigger-btn-text');
+            btnText.innerText = "Dispatching...";
             try {
-                await fetch('/api/v1/revops/trigger-cycle', { method: 'POST' });
-                fetchAllTelemetry();
-            } catch (e) { console.error('Trigger error:', e); }
+                const response = await fetch('/api/v1/revops/trigger-cycle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: "[Dashboard] Manual Grok autonomous cycle triggered by operator.",
+                        slack_webhook_url: ""
+                    })
+                });
+                const resData = await response.json();
+                console.log("Trigger execution response:", resData);
+                await fetchAllTelemetry();
+            } catch (e) { 
+                console.error('Trigger error:', e); 
+            } finally {
+                btnText.innerText = "Trigger Grok RevOps Cycle";
+            }
         }
     </script>
 </body>

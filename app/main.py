@@ -3,13 +3,33 @@ import httpx
 from pathlib import Path
 from datetime import datetime, timezone
 from contextlib import asynccontextmanager
+from typing import Optional
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
+from pydantic import BaseModel, Field
 import asyncpg
 
 DATABASE_URL = os.getenv("DATABASE_URL")
-SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
+DEFAULT_SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
 db_pool = None
+
+class TriggerPayload(BaseModel):
+    message: Optional[str] = Field(
+        default="[Grok-Agent] Autonomous qualification cycle executed successfully.",
+        description="Custom log message or alert payload to broadcast."
+    )
+    slack_webhook_url: Optional[str] = Field(
+        default="",
+        description="Optional Slack Webhook URL to override env settings for live interactive testing."
+    )
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "message": "[Grok-Agent] Interactive test execution cycle triggered from API Docs.",
+                "slack_webhook_url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+            }
+        }
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -61,20 +81,25 @@ async def lifespan(app: FastAPI):
     if db_pool:
         await db_pool.close()
 
-app = FastAPI(title="EchoPipeline-AI", version="3.9.2-ENTERPRISE", lifespan=lifespan)
+app = FastAPI(
+    title="EchoPipeline-AI",
+    version="3.9.2-ENTERPRISE",
+    description="SPARKLE.NET RevOps, Grok AI Reasoning & Alexa Event Bus API Engine",
+    lifespan=lifespan
+)
 
-@app.get("/health")
+@app.get("/health", summary="Service Health Check")
 async def health():
     return {"status": "ok", "database": "connected" if db_pool else "fallback_mode"}
 
-@app.get("/api/v1/revops/chart-data")
+@app.get("/api/v1/revops/chart-data", summary="Get Telemetry Velocity Chart Data")
 async def chart_data():
     return {
         "labels": ["11:00 PM", "11:10 PM", "11:20 PM", "11:30 PM", "11:40 PM"],
         "values": [240000, 275000, 310000, 350000, 394200]
     }
 
-@app.get("/api/v1/revops/stream-logs")
+@app.get("/api/v1/revops/stream-logs", summary="Get Grok & Slack Stream Logs")
 async def stream_logs():
     logs = []
     if db_pool:
@@ -94,34 +119,39 @@ async def stream_logs():
         ]
     return {"logs": logs}
 
-@app.post("/api/v1/revops/trigger-cycle")
-async def trigger_cycle():
-    slack_msg = "[SPARKLE.NET Grok RevOps Agent] Grok autonomous agent successfully executed active RevOps qualification cycle."
-    
-    # 1. Real Slack Webhook dispatch
-    if SLACK_WEBHOOK_URL:
+@app.post("/api/v1/revops/trigger-cycle", summary="Trigger Grok RevOps Cycle & Dispatch Slack Alert")
+async def trigger_cycle(payload: TriggerPayload = TriggerPayload()):
+    msg = payload.message if payload and payload.message else "[Grok-Agent] Autonomous qualification cycle executed successfully."
+    target_webhook = payload.slack_webhook_url if (payload and payload.slack_webhook_url) else DEFAULT_SLACK_WEBHOOK_URL
+
+    slack_status = "SKIPPED"
+    if target_webhook:
         try:
             async with httpx.AsyncClient() as client:
-                await client.post(SLACK_WEBHOOK_URL, json={"text": slack_msg}, timeout=5.0)
+                res = await client.post(target_webhook, json={"text": f"[SPARKLE.NET RevOps] {msg}"}, timeout=5.0)
+                slack_status = "COMMITTED" if res.status_code == 200 else f"FAILED_{res.status_code}"
         except Exception as e:
-            print(f"Slack webhook error: {e}")
+            slack_status = f"ERROR: {str(e)}"
 
-    # 2. Database event logging & audit ledger commit
     if db_pool:
         try:
             async with db_pool.acquire() as conn:
-                await conn.execute("INSERT INTO public.grok_slack_streams (message, status) VALUES ($1, $2)", "[Grok-Agent] Autonomous qualification cycle executed successfully.", "SUCCESS")
-                await conn.execute("INSERT INTO public.grok_slack_streams (message, status) VALUES ($1, $2)", "[Slack-Dispatcher] Governance metrics broadcasted to #echopipeline_alerts.", "COMMITTED")
+                await conn.execute("INSERT INTO public.grok_slack_streams (message, status) VALUES ($1, $2)", msg, "SUCCESS")
+                await conn.execute("INSERT INTO public.grok_slack_streams (message, status) VALUES ($1, $2)", f"[Slack-Dispatcher] Status: {slack_status}", "COMMITTED" if "COMMITTED" in slack_status else "WARNING")
                 await conn.execute(
                     "INSERT INTO public.revops_audit_logs (agent, action_type, details, rigs_score, trust_delta, status) VALUES ($1, $2, $3, $4, $5, $6)",
-                    "Grok-Core", "QUALIFICATION_CYCLE", "Autonomous multi-agent pipeline verified and broadcasted to Slack.", "RIGS-A1", 1850.00, "COMMITTED"
+                    "Grok-Core", "QUALIFICATION_CYCLE", msg, "RIGS-A1", 1850.00, "COMMITTED"
                 )
         except Exception as e:
             print(f"DB log error: {e}")
 
-    return {"status": "cycle_completed"}
+    return {
+        "status": "cycle_completed",
+        "message_processed": msg,
+        "slack_dispatch_status": slack_status
+    }
 
-@app.get("/api/v1/revops/audit-logs")
+@app.get("/api/v1/revops/audit-logs", summary="Get Enterprise Audit Logs")
 async def audit_logs():
     logs = []
     if db_pool:
@@ -143,7 +173,7 @@ async def audit_logs():
         }]
     return {"logs": logs}
 
-@app.get("/api/v1/alexa/stream")
+@app.get("/api/v1/alexa/stream", summary="Get Alexa Streaming Bus Telemetry")
 async def alexa_stream():
     streams = []
     if db_pool:
@@ -166,7 +196,7 @@ async def alexa_stream():
         }]
     return {"streams": streams}
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def dashboard():
     html_path = Path(__file__).parent / "index.html"
     if html_path.exists():
