@@ -1,5 +1,7 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
+from typing import Optional, Dict, Any
 import random
 from datetime import datetime
 
@@ -21,6 +23,19 @@ logs_cache = [
     {"timestamp": datetime.utcnow().strftime("%H:%M:%S"), "source": "supabase-db", "event": "RIGS score computed (Score: 92/100)", "status": "VERIFIED"},
     {"timestamp": datetime.utcnow().strftime("%H:%M:%S"), "source": "alexa-bridge", "event": "Voice intent payload parsed: 'Trigger pipeline sync'", "status": "DISPATCHED"}
 ]
+
+class SlotValue(BaseModel):
+    value: Optional[str] = None
+
+class IntentPayload(BaseModel):
+    name: str
+    slots: Optional[Dict[str, SlotValue]] = None
+
+class AlexaRequestContainer(BaseModel):
+    intent: IntentPayload
+
+class AlexaWebhookBody(BaseModel):
+    request: AlexaRequestContainer
 
 @app.get("/", response_class=HTMLResponse)
 def control_room_dashboard():
@@ -254,23 +269,13 @@ def trigger_action(action: str):
         logs_cache.insert(0, {"timestamp": datetime.utcnow().strftime("%H:%M:%S"), "source": "admin-action", "event": "System cache and redis buffers flushed", "status": "SUCCESS"})
     return {"status": "executed", "action": action}
 
-# --- Expanded Amazon Alexa+ Track Voice Intent Webhook Routes ---
 @app.post("/api/alexa/intent")
-async def handle_alexa_intent(request: Request):
+async def handle_alexa_intent(body: AlexaWebhookBody):
     """
-    Unified Alexa+ Skill Webhook endpoint handling specialized intent routing:
-    - GetPipelineStatusIntent
-    - RunEnrichmentIntent
-    - QueryRIGSIntent
-    - TriggerSettlementIntent
+    Unified Alexa+ Skill Webhook endpoint handling specialized intent routing with full Swagger UI schema support.
     """
-    try:
-        body = await request.json()
-        intent_name = body.get("request", {}).get("intent", {}).get("name", "GetPipelineStatusIntent")
-        slots = body.get("request", {}).get("intent", {}).get("slots", {})
-    except Exception:
-        intent_name = "GetPipelineStatusIntent"
-        slots = {}
+    intent_name = body.request.intent.name
+    slots = body.request.intent.slots or {}
 
     speech_text = "EchoPipeline system is fully operational."
     source_tag = "alexa-bridge"
@@ -285,7 +290,8 @@ async def handle_alexa_intent(request: Request):
         event_msg = "Voice command: Lead enrichment batch triggered"
 
     elif intent_name == "QueryRIGSIntent":
-        company = slots.get("Company", {}).get("value", "Apex Logistics")
+        company_slot = slots.get("Company")
+        company = company_slot.value if company_slot and company_slot.value else "Apex Logistics"
         speech_text = f"RIGS evaluation for {company}: Risk is low at 0.12, Intent score is 94, Tier-1 Growth, C-Suite stakeholder. Status is Qualified."
         event_msg = f"Voice query: RIGS matrix checked for {company}"
 
@@ -306,7 +312,6 @@ async def handle_alexa_intent(request: Request):
         "status": "DISPATCHED"
     })
 
-    # Return standard Alexa Skills Kit JSON response format
     return {
         "version": "1.0",
         "response": {
