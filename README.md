@@ -563,18 +563,18 @@ Below is live production proof of the **Sparklenet Bot** broadcasting real-time 
 
 
 
-![Real-Time Grok Reasoning Slack Alert](app/static/images/Echoalert1.jpg)
+![Real-Time Grok Reasoning Slack Alert](app/static/Echoalert1.jpg)
 
 
 
-![Real-Time Grok Reasoning Slack Alert](app/static/images/Echoalert2.jpg)
+![Real-Time Grok Reasoning Slack Alert](app/static/Echoalert2.jpg)
 
 
 
-![Real-Time Grok Reasoning Slack Alert](app/static/images/Echoalert3.jpg)
+![Real-Time API Health](app/static/Echoalert3.jpg)
 
 
-![Real-Time Grok Reasoning Api health](app/static/images/Echoalert4.jpg)
+![Real-Time Api health](app/static/Echoalert4.jpg)
 
 
 
