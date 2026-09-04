@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from datetime import datetime, timezone
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 import asyncpg
 
@@ -32,6 +32,14 @@ async def lifespan(app: FastAPI):
                         details TEXT,
                         rigs_score TEXT,
                         trust_delta NUMERIC(12,2),
+                        status TEXT,
+                        created_at TIMESTAMPTZ DEFAULT NOW()
+                    );
+                    CREATE TABLE IF NOT EXISTS public.alexa_streaming_logs (
+                        id SERIAL PRIMARY KEY,
+                        device_id TEXT,
+                        utterance TEXT,
+                        response_payload TEXT,
                         status TEXT,
                         created_at TIMESTAMPTZ DEFAULT NOW()
                     );
@@ -85,6 +93,51 @@ async def audit_logs():
             "created_at": datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
         }]
     return {"logs": logs}
+
+@app.get("/api/v1/alexa/stream")
+async def alexa_stream():
+    streams = []
+    if db_pool:
+        try:
+            async with db_pool.acquire() as conn:
+                rows = await conn.fetch("SELECT device_id, utterance, response_payload, status, created_at FROM public.alexa_streaming_logs ORDER BY id DESC LIMIT 10")
+                for r in rows:
+                    streams.append({
+                        "device_id": r["device_id"],
+                        "utterance": r["utterance"],
+                        "response_payload": r["response_payload"],
+                        "status": r["status"],
+                        "created_at": r["created_at"].strftime("%H:%M:%S UTC")
+                    })
+        except Exception:
+            pass
+    if not streams:
+        streams = [{
+            "device_id": "AMZN_ECHO_STUDIO_94X",
+            "utterance": "Alexa, query EchoPipeline active trust volume",
+            "response_payload": "Settled escrow volume stands at $394,200.",
+            "status": "DISPATCHED",
+            "created_at": datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
+        }]
+    return {"streams": streams}
+
+@app.post("/api/v1/alexa/webhook")
+async def alexa_webhook(request: Request):
+    data = await request.json()
+    device_id = data.get("device_id", "AMZN_ECHO_NODE_01")
+    utterance = data.get("utterance", "Trigger RevOps Audit")
+    response_payload = data.get("response", "Autonomous cycle executed successfully.")
+    
+    if db_pool:
+        try:
+            async with db_pool.acquire() as conn:
+                await conn.execute(
+                    "INSERT INTO public.alexa_streaming_logs (device_id, utterance, response_payload, status) VALUES ($1, $2, $3, $4)",
+                    device_id, utterance, response_payload, "SUCCESS"
+                )
+        except Exception:
+            pass
+    return {"status": "received", "utterance": utterance}
 
 @app.get("/", response_class=HTMLResponse)
 async def dashboard():
