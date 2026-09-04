@@ -341,7 +341,6 @@ if __name__ == "__main__":
     )
 
 
-<<<<<<< HEAD
 from fastapi.responses import HTMLResponse
 
 @app.get("/", response_class=HTMLResponse)
@@ -393,4 +392,3 @@ def dashboard():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
->>>>>>> 79c8e7b (fix: bind uvicorn to $PORT and add /health endpoint)
