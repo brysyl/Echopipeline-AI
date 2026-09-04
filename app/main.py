@@ -15,12 +15,12 @@ import os
 from contextlib import asynccontextmanager
 from typing import Dict, Any, Optional
 
-from fastapi import FastAPI, Request, Response, HTTPException
+from fastapi import Body, Header, FastAPI, Request, Response, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
 
-from app.config import Settings
+from .config import Settings
 from app.mcp.protocol import MCPStreamableHTTPServer
 from app.mcp.tools import get_all_tools
 from app.mcp.handlers import bind_handlers_to_server
@@ -162,7 +162,11 @@ async def health_check() -> Dict[str, Any]:
 
 
 @app.post("/mcp/stream", tags=["MCP"])
-async def mcp_stream(request: Request) -> Response:
+async def mcp_stream(
+    request: Request,
+    payload: dict = Body(..., example={"jsonrpc": "2.0", "method": "ping", "params": {}, "id": 1}),
+    x_mcp_version: str = Header(default="2025-11-25", alias="x-mcp-protocol-version")
+) -> Response:
     """
     MCP Streamable HTTP endpoint (spec 2025-11-25).
     
@@ -182,7 +186,7 @@ async def mcp_stream(request: Request) -> Response:
     
     try:
         # Parse request body
-        body = await request.json()
+        body = payload
         logger.debug(f"MCP request: {body.get('method', 'unknown')}")
         
         # Handle request through MCP server

@@ -1,0 +1,1159 @@
+{
+  "friction_logs_version": "1.0",
+  "generated_at": "2026-09-04T08:58:51.941931+00:00",
+  "total_events": 44,
+  "event_severity_summary": {
+    "critical": 18,
+    "warning": 26,
+    "info": 0
+  },
+  "friction_events": [
+    {
+      "timestamp": "2026-09-04T00:15:37.914663+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "GET",
+        "protocol_version": null,
+        "content_type": "unknown",
+        "size_bytes": 0
+      },
+      "performance": {
+        "latency_ms": 0.3783702850341797,
+        "latency_spike": false
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 405
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T00:15:45.994858+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "GET",
+        "protocol_version": null,
+        "content_type": "unknown",
+        "size_bytes": 0
+      },
+      "performance": {
+        "latency_ms": 0.2980232238769531,
+        "latency_spike": false
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 405
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T08:06:27.341349+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 39
+      },
+      "performance": {
+        "latency_ms": 122854.40826416016,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 500
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T08:06:27.341954+00:00",
+      "event_type": "json_rpc_mismatch",
+      "severity": "warning",
+      "description": "JSON-RPC structure mismatch",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 39
+      },
+      "performance": {
+        "latency_ms": 122854.40826416016,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": [
+          "Expected jsonrpc=2.0, got None",
+          "Missing required 'method' field"
+        ]
+      },
+      "response": {
+        "status": 500
+      },
+      "remediation": null
+    },
+    {
+      "timestamp": "2026-09-04T08:06:27.342473+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 122854.4ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 39
+      },
+      "performance": {
+        "latency_ms": 122854.40826416016,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 500
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:10:49.433905+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 79
+      },
+      "performance": {
+        "latency_ms": 86796.38075828552,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 500
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T08:10:49.435663+00:00",
+      "event_type": "json_rpc_mismatch",
+      "severity": "warning",
+      "description": "JSON-RPC structure mismatch",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 79
+      },
+      "performance": {
+        "latency_ms": 86796.38075828552,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": [
+          "Unknown method: ping"
+        ]
+      },
+      "response": {
+        "status": 500
+      },
+      "remediation": null
+    },
+    {
+      "timestamp": "2026-09-04T08:10:49.436206+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 86796.4ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 79
+      },
+      "performance": {
+        "latency_ms": 86796.38075828552,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 500
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:13:07.674852+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 63181.970834732056,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 500
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T08:13:07.675614+00:00",
+      "event_type": "json_rpc_mismatch",
+      "severity": "warning",
+      "description": "JSON-RPC structure mismatch",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 63181.970834732056,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": [
+          "Unknown method: ping"
+        ]
+      },
+      "response": {
+        "status": 500
+      },
+      "remediation": null
+    },
+    {
+      "timestamp": "2026-09-04T08:13:07.676382+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 63182.0ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 63181.970834732056,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 500
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:17:49.080793+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 3964.31040763855,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 500
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T08:17:49.081782+00:00",
+      "event_type": "json_rpc_mismatch",
+      "severity": "warning",
+      "description": "JSON-RPC structure mismatch",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 3964.31040763855,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": [
+          "Unknown method: ping"
+        ]
+      },
+      "response": {
+        "status": 500
+      },
+      "remediation": null
+    },
+    {
+      "timestamp": "2026-09-04T08:17:49.082633+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 3964.3ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 3964.31040763855,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 500
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:25:48.220209+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 69
+      },
+      "performance": {
+        "latency_ms": 24963.892459869385,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T08:25:48.221108+00:00",
+      "event_type": "json_rpc_mismatch",
+      "severity": "warning",
+      "description": "JSON-RPC structure mismatch",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 69
+      },
+      "performance": {
+        "latency_ms": 24963.892459869385,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": [
+          "Unknown method: ping"
+        ]
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": null
+    },
+    {
+      "timestamp": "2026-09-04T08:25:48.221746+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 24963.9ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 69
+      },
+      "performance": {
+        "latency_ms": 24963.892459869385,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:28:43.448090+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 4891.005992889404,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T08:28:43.449641+00:00",
+      "event_type": "json_rpc_mismatch",
+      "severity": "warning",
+      "description": "JSON-RPC structure mismatch",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 4891.005992889404,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": [
+          "Unknown method: ping"
+        ]
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": null
+    },
+    {
+      "timestamp": "2026-09-04T08:28:43.450799+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 4891.0ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 4891.005992889404,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:30:25.578787+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 12746.156454086304,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T08:30:25.582473+00:00",
+      "event_type": "json_rpc_mismatch",
+      "severity": "warning",
+      "description": "JSON-RPC structure mismatch",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 12746.156454086304,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": [
+          "Unknown method: ping"
+        ]
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": null
+    },
+    {
+      "timestamp": "2026-09-04T08:30:25.583759+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 12746.2ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 12746.156454086304,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:32:12.175083+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 2922.245502471924,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T08:32:12.176747+00:00",
+      "event_type": "json_rpc_mismatch",
+      "severity": "warning",
+      "description": "JSON-RPC structure mismatch",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 2922.245502471924,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": [
+          "Unknown method: ping"
+        ]
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": null
+    },
+    {
+      "timestamp": "2026-09-04T08:32:12.178184+00:00",
+      "event_type": "latency_spike",
+      "severity": "warning",
+      "description": "High latency: 2922.2ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 52
+      },
+      "performance": {
+        "latency_ms": 2922.245502471924,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:38:29.044569+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 58
+      },
+      "performance": {
+        "latency_ms": 2879.5909881591797,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T08:38:29.046440+00:00",
+      "event_type": "latency_spike",
+      "severity": "warning",
+      "description": "High latency: 2879.6ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 58
+      },
+      "performance": {
+        "latency_ms": 2879.5909881591797,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:39:13.826131+00:00",
+      "event_type": "latency_spike",
+      "severity": "warning",
+      "description": "High latency: 2956.0ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": "2025-11-25",
+        "content_type": "application/json",
+        "size_bytes": 58
+      },
+      "performance": {
+        "latency_ms": 2956.0251235961914,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:40:26.389025+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 26272.3ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": "2025-11-25",
+        "content_type": "application/json",
+        "size_bytes": 58
+      },
+      "performance": {
+        "latency_ms": 26272.26185798645,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:42:52.488970+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 69
+      },
+      "performance": {
+        "latency_ms": 43632.34734535217,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T08:42:52.490199+00:00",
+      "event_type": "json_rpc_mismatch",
+      "severity": "warning",
+      "description": "JSON-RPC structure mismatch",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 69
+      },
+      "performance": {
+        "latency_ms": 43632.34734535217,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": [
+          "Unknown method: ping"
+        ]
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": null
+    },
+    {
+      "timestamp": "2026-09-04T08:42:52.491188+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 43632.3ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 69
+      },
+      "performance": {
+        "latency_ms": 43632.34734535217,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:43:49.539761+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 76
+      },
+      "performance": {
+        "latency_ms": 24115.87357521057,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T08:43:49.540996+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 24115.9ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 76
+      },
+      "performance": {
+        "latency_ms": 24115.87357521057,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:44:35.310815+00:00",
+      "event_type": "missing_protocol_header",
+      "severity": "warning",
+      "description": "MCP protocol version header missing",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": null,
+        "content_type": "application/json",
+        "size_bytes": 76
+      },
+      "performance": {
+        "latency_ms": 302.37364768981934,
+        "latency_spike": false
+      },
+      "compliance": {
+        "missing_headers": [
+          "x-mcp-protocol-version"
+        ],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Include 'x-mcp-protocol-version: 2025-11-25' header"
+    },
+    {
+      "timestamp": "2026-09-04T08:45:06.069950+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 12878.3ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": "2025-11-25",
+        "content_type": "application/json",
+        "size_bytes": 76
+      },
+      "performance": {
+        "latency_ms": 12878.278493881226,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:46:02.018741+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 29519.4ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": "2025-11-25",
+        "content_type": "application/json",
+        "size_bytes": 76
+      },
+      "performance": {
+        "latency_ms": 29519.357919692993,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:47:27.954207+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 28760.1ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": "2025-11-25",
+        "content_type": "application/json",
+        "size_bytes": 76
+      },
+      "performance": {
+        "latency_ms": 28760.1261138916,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:47:48.291255+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 8249.8ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": "2025-11-25",
+        "content_type": "application/json",
+        "size_bytes": 76
+      },
+      "performance": {
+        "latency_ms": 8249.760866165161,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:52:19.036836+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 79930.1ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": "2025-11-25",
+        "content_type": "application/json",
+        "size_bytes": 76
+      },
+      "performance": {
+        "latency_ms": 79930.09233474731,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:56:54.566435+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 38495.3ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": "2025-11-25",
+        "content_type": "application/json",
+        "size_bytes": 58
+      },
+      "performance": {
+        "latency_ms": 38495.325803756714,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:58:35.793659+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 12426.5ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": "2025-11-25",
+        "content_type": "application/json",
+        "size_bytes": 58
+      },
+      "performance": {
+        "latency_ms": 12426.546812057495,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    },
+    {
+      "timestamp": "2026-09-04T08:58:51.941895+00:00",
+      "event_type": "latency_spike",
+      "severity": "critical",
+      "description": "High latency: 13594.7ms",
+      "request": {
+        "path": "/mcp/stream",
+        "method": "POST",
+        "protocol_version": "2025-11-25",
+        "content_type": "application/json",
+        "size_bytes": 102
+      },
+      "performance": {
+        "latency_ms": 13594.738960266113,
+        "latency_spike": true
+      },
+      "compliance": {
+        "missing_headers": [],
+        "spec_mismatches": []
+      },
+      "response": {
+        "status": 400
+      },
+      "remediation": "Check backend service health and database performance"
+    }
+  ]
+}
