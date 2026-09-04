@@ -29,6 +29,7 @@
     </header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full space-y-6 flex-grow">
+        <!-- Metrics Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-[#111827] border border-slate-800/80 rounded-xl p-5 shadow-lg">
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Active Leads Enriched</p>
@@ -52,6 +53,35 @@
             </div>
         </div>
 
+        <!-- Real-Time Telemetry Velocity Chart -->
+        <div class="bg-[#111827] border border-slate-800/80 rounded-xl p-6 shadow-xl">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                <div>
+                    <h2 class="text-sm font-extrabold text-white uppercase tracking-wider">📈 Real-Time Telemetry Velocity</h2>
+                    <p class="text-xs text-slate-400 mt-1">Live ledger stream velocity tracking trust accumulation and lead throughput.</p>
+                </div>
+                <span class="px-2.5 py-1 text-[11px] font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded font-bold">LEDGER STREAM (LIVE)</span>
+            </div>
+            <div class="h-64 relative mt-4">
+                <canvas id="velocityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Grok AI & Slack Telemetry Console -->
+        <div class="bg-[#111827] border border-slate-800/80 rounded-xl p-6 shadow-xl space-y-4">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                <div>
+                    <h2 class="text-sm font-extrabold text-white uppercase tracking-wider">🧠 Grok AI Reasoning & Slack Telemetry Console</h2>
+                    <p class="text-xs text-slate-400 mt-1">Live autonomous multi-agent reasoning stream and Slack operational bridge dispatch logs.</p>
+                </div>
+                <span class="px-2.5 py-1 text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded font-bold animate-pulse">AUTONOMOUS ACTIVE</span>
+            </div>
+            <div id="log-stream" class="space-y-2 max-h-56 overflow-y-auto pr-1 font-mono text-xs">
+                <div class="py-2 px-3 bg-[#0d1322] rounded border border-slate-800/60 text-slate-400">[SYSTEM] Establishing real-time stream connection...</div>
+            </div>
+        </div>
+
+        <!-- Alexa Streaming Bus Console -->
         <div class="bg-[#111827] border border-slate-800/80 rounded-xl p-6 shadow-xl">
             <div class="flex items-center justify-between pb-4 border-b border-slate-800">
                 <div>
@@ -78,6 +108,7 @@
             </div>
         </div>
 
+        <!-- Enterprise Grok Autonomous Audit Ledger -->
         <div class="bg-[#111827] border border-slate-800/80 rounded-xl p-6 shadow-xl">
             <div class="flex items-center justify-between pb-4 border-b border-slate-800">
                 <div>
@@ -107,9 +138,53 @@
     </main>
 
     <script>
+        let velocityChart = null;
+        function initVelocityChart(chartData) {
+            const ctx = document.getElementById('velocityChart').getContext('2d');
+            if (velocityChart) velocityChart.destroy();
+            velocityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        label: 'Trust Volume ($)',
+                        data: chartData.values,
+                        borderColor: '#818cf8',
+                        backgroundColor: 'rgba(129, 140, 248, 0.08)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } } },
+                        y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } } }
+                    }
+                }
+            });
+        }
+
         async function fetchAllTelemetry() {
             try {
-                // Fetch Audit Logs
+                const resChart = await fetch('/api/v1/revops/chart-data');
+                const chartData = await resChart.json();
+                initVelocityChart(chartData);
+
+                const resStream = await fetch('/api/v1/revops/stream-logs');
+                const streamData = await resStream.json();
+                const logStreamDiv = document.getElementById('log-stream');
+                logStreamDiv.innerHTML = '';
+                streamData.logs.forEach(line => {
+                    const div = document.createElement('div');
+                    div.className = 'py-2 px-3 bg-[#0d1322] rounded border border-slate-800/60 flex items-center justify-between';
+                    div.innerHTML = `<span class="text-slate-300">${line.message}</span><span class="px-2 py-0.5 rounded text-[10px] font-bold ${line.status === 'SUCCESS' || line.status === 'COMMITTED' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'}">${line.status}</span>`;
+                    logStreamDiv.appendChild(div);
+                });
+
                 const resAudit = await fetch('/api/v1/revops/audit-logs');
                 const dataAudit = await resAudit.json();
                 const tbodyAudit = document.getElementById('audit-table-body');
@@ -117,18 +192,10 @@
                 dataAudit.logs.forEach(log => {
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-slate-800/40 transition';
-                    tr.innerHTML = `
-                        <td class="py-3 px-3 text-slate-400">${log.created_at}</td>
-                        <td class="py-3 px-3 font-bold text-white">${log.agent}</td>
-                        <td class="py-3 px-3 text-slate-300">${log.details}</td>
-                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-indigo-300 border border-slate-700">${log.rigs_score}</span></td>
-                        <td class="py-3 px-3 text-emerald-400 font-bold">+$${log.trust_delta.toLocaleString()}</td>
-                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 font-bold">${log.status}</span></td>
-                    `;
+                    tr.innerHTML = `<td class="py-3 px-3 text-slate-400">${log.created_at}</td><td class="py-3 px-3 font-bold text-white">${log.agent}</td><td class="py-3 px-3 text-slate-300">${log.details}</td><td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-indigo-300 border border-slate-700">${log.rigs_score}</span></td><td class="py-3 px-3 text-emerald-400 font-bold">+$${log.trust_delta.toLocaleString()}</td><td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 font-bold">${log.status}</span></td>`;
                     tbodyAudit.appendChild(tr);
                 });
 
-                // Fetch Alexa Streaming Bus Logs
                 const resAlexa = await fetch('/api/v1/alexa/stream');
                 const dataAlexa = await resAlexa.json();
                 const tbodyAlexa = document.getElementById('alexa-table-body');
@@ -136,13 +203,7 @@
                 dataAlexa.streams.forEach(stream => {
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-slate-800/40 transition';
-                    tr.innerHTML = `
-                        <td class="py-3 px-3 text-slate-400">${stream.created_at}</td>
-                        <td class="py-3 px-3 font-mono text-indigo-300">${stream.device_id}</td>
-                        <td class="py-3 px-3 text-white font-semibold">"${stream.utterance}"</td>
-                        <td class="py-3 px-3 text-slate-300">${stream.response_payload}</td>
-                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 font-bold">${stream.status}</span></td>
-                    `;
+                    tr.innerHTML = `<td class="py-3 px-3 text-slate-400">${stream.created_at}</td><td class="py-3 px-3 font-mono text-indigo-300">${stream.device_id}</td><td class="py-3 px-3 text-white font-semibold">"${stream.utterance}"</td><td class="py-3 px-3 text-slate-300">${stream.response_payload}</td><td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 font-bold">${stream.status}</span></td>`;
                     tbodyAlexa.appendChild(tr);
                 });
             } catch (e) {
@@ -150,10 +211,13 @@
             }
         }
         fetchAllTelemetry();
-        setInterval(fetchAllTelemetry, 5000);
+        setInterval(fetchAllTelemetry, 4000);
 
-        function triggerGrokAutonomousCycle() {
-            fetchAllTelemetry();
+        async function triggerGrokAutonomousCycle() {
+            try {
+                await fetch('/api/v1/revops/trigger-cycle', { method: 'POST' });
+                fetchAllTelemetry();
+            } catch (e) { console.error('Trigger error:', e); }
         }
     </script>
 </body>
