@@ -105,7 +105,10 @@ def control_room_dashboard():
                 </div>
                 <div class="flex items-center space-x-3">
                     <span class="px-3 py-1 text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full">Alexa+ Bridge Active</span>
-                    <a href="/docs" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition-colors border border-slate-700">OpenAPI Docs</a>
+                    <a <button onclick="fetch('/api/action/trigger', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({intent_string: 'Live Navbar Trigger'})}).then(res => res.json()).then(() => alert('Live Gemini & Slack Hooks Triggered!')).catch(e => alert('Error: ' + e))" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-1.5 rounded transition shadow-sm">
+            🚀 Trigger Gemini-Slack
+        </button>
+        <a href="/docs" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition-colors border border-slate-700">OpenAPI Docs</a>
                     <a href="/health" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition-colors border border-slate-700">Health Probes</a>
                 </div>
             </div>
