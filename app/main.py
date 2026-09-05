@@ -323,11 +323,11 @@ async def handle_alexa_intent(body: AlexaWebhookBody):
 
 
 
+
 @app.post("/api/action/trigger")
 async def trigger_gemini_slack_action(payload: dict = None):
     intent = payload.get("intent_string", "Dashboard Manual Grok Live Trigger") if payload else "Dashboard Manual Grok Live Trigger"
     try:
-        print(f"[Trigger Debug] Received intent: {intent}")
         await dispatch_gemini_slack_alert(
             intent=intent,
             status="SUCCESS",
@@ -335,8 +335,4 @@ async def trigger_gemini_slack_action(payload: dict = None):
         )
         return {"status": "success", "message": "Live Grok & Slack dispatch executed successfully!"}
     except Exception as e:
-        import traceback
-        tb = traceback.format_exc()
-        print(f"[Trigger Error] {str(e)}
-{tb}")
-        return {"status": "error", "message": str(e), "traceback": tb}
+        return {"status": "error", "message": str(e)}
