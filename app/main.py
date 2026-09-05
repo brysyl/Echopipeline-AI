@@ -266,13 +266,6 @@ def get_metrics():
 def get_friction_logs():
     return logs_cache[:8]
 
-@app.post("/api/action/trigger")
-def trigger_action(action: str):
-    if action == "reenrich":
-        logs_cache.insert(0, {"timestamp": datetime.utcnow().strftime("%H:%M:%S"), "source": "admin-action", "event": "Manual lead re-enrichment batch triggered", "status": "SUCCESS"})
-    elif action == "flush":
-        logs_cache.insert(0, {"timestamp": datetime.utcnow().strftime("%H:%M:%S"), "source": "admin-action", "event": "System cache and redis buffers flushed", "status": "SUCCESS"})
-    return {"status": "executed", "action": action}
 
 @app.post("/api/alexa/intent")
 async def handle_alexa_intent(body: AlexaWebhookBody):
@@ -329,15 +322,21 @@ async def handle_alexa_intent(body: AlexaWebhookBody):
     }
 
 
+
 @app.post("/api/action/trigger")
 async def trigger_gemini_slack_action(payload: dict = None):
-    intent = payload.get("intent_string", "Dashboard Manual Gemini-Slack Trigger") if payload else "Dashboard Manual Gemini-Slack Trigger"
+    intent = payload.get("intent_string", "Dashboard Manual Grok Live Trigger") if payload else "Dashboard Manual Grok Live Trigger"
     try:
+        print(f"[Trigger Debug] Received intent: {intent}")
         await dispatch_gemini_slack_alert(
             intent=intent,
             status="SUCCESS",
             rigs_score="RIGS-A1 (Fully Verified)"
         )
-        return {"status": "success", "message": "Live Gemini & Slack dispatch executed successfully!"}
+        return {"status": "success", "message": "Live Grok & Slack dispatch executed successfully!"}
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        import traceback
+        tb = traceback.format_exc()
+        print(f"[Trigger Error] {str(e)}
+{tb}")
+        return {"status": "error", "message": str(e), "traceback": tb}
