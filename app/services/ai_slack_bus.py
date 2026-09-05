@@ -9,7 +9,7 @@ async def dispatch_gemini_slack_alert(intent: str, status: str, rigs_score: str)
     
     timestamp = datetime.now(timezone.utc).strftime("%m/%d/%Y | %H:%M:%S UTC")
     
-    # Initialize official Google GenAI client
+    # Updated to gemini-3.6-flash per API recommendation
     client = genai.Client(api_key=gemini_key)
     
     prompt = (
@@ -20,7 +20,7 @@ async def dispatch_gemini_slack_alert(intent: str, status: str, rigs_score: str)
     )
     
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-3.6-flash",
         contents=prompt,
     )
     reasoning_output = response.text.strip()
