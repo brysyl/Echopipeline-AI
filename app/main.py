@@ -327,3 +327,17 @@ async def handle_alexa_intent(body: AlexaWebhookBody):
             "shouldEndSession": True
         }
     }
+
+
+@app.post("/api/action/trigger")
+async def trigger_gemini_slack_action(payload: dict = None):
+    intent = payload.get("intent_string", "Dashboard Manual Gemini-Slack Trigger") if payload else "Dashboard Manual Gemini-Slack Trigger"
+    try:
+        await dispatch_gemini_slack_alert(
+            intent=intent,
+            status="SUCCESS",
+            rigs_score="RIGS-A1 (Fully Verified)"
+        )
+        return {"status": "success", "message": "Live Gemini & Slack dispatch executed successfully!"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
