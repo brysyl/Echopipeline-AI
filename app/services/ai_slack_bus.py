@@ -9,7 +9,7 @@ async def dispatch_gemini_slack_alert(intent: str, status: str, rigs_score: str)
     
     timestamp = datetime.now(timezone.utc).strftime("%m/%d/%Y | %H:%M:%S UTC")
     
-    # Switched model to verified available Groq model (llama3-70b-8192 or llama-3.1-70b-versatile)
+    # Updated to active current Groq model: llama-3.3-70b-versatile
     client = Groq(api_key=groq_key)
     chat_completion = client.chat.completions.create(
         messages=[
@@ -22,7 +22,7 @@ async def dispatch_gemini_slack_alert(intent: str, status: str, rigs_score: str)
                 "content": f"Execute real-time autonomous cycle for intent: '{intent}' with RIGS score '{rigs_score}'."
             }
         ],
-        model="llama-3.1-70b-versatile",
+        model="llama-3.3-70b-versatile",
         temperature=0.3,
     )
     reasoning_output = chat_completion.choices[0].message.content.strip()
