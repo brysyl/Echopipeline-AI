@@ -8,26 +8,19 @@ async def dispatch_gemini_slack_alert(intent: str, status: str, rigs_score: str)
     gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     
     timestamp = datetime.now(timezone.utc).strftime("%m/%d/%Y | %H:%M:%S UTC")
-    reasoning_output = "Gemini multi-agent reasoning check nominal."
+    
+    # Strict live API invocation with google-genai SDK (no fallbacks)
+    client = genai.Client(api_key=gemini_key)
+    response = client.models.generate_content(
+        model='gemini-2.5-flash',
+        contents=(
+            f"Perform a rigorous multi-step SparkleNET RevOps analysis for intent: '{intent}' "
+            f"with RIGS score '{rigs_score}'. Provide output strictly formatted as 4 bullet points: "
+            f"Step 1 (Ingestion), Step 2 (Qualification), Step 3 (Settlement), and Step 4 (Dispatch)."
+        )
+    )
+    reasoning_output = response.text.strip()
 
-    if gemini_key:
-        try:
-            client = genai.Client(api_key=gemini_key)
-            response = client.models.generate_content(
-                model='gemini-2.5-flash',
-                contents=f"Analyze this RevOps intent event for SparkleNET: Intent '{intent}' with RIGS score '{rigs_score}'. Provide a concise 3-step autonomous reasoning breakdown (Ingestion, Qualification, Settlement)."
-            )
-            if response and response.text:
-                reasoning_output = response.text.strip()
-        except Exception as e:
-            print(f"Gemini API Error: {str(e)}")
-            reasoning_output = f"Live reasoning execution encountered error: {str(e)}"
-
-    if not slack_webhook:
-        print("SLACK_WEBHOOK_URL is not set.")
-        return
-
-    # Match the exact rich block/markdown structure of the proven SparkleNET Slack alerts
     slack_message = {
         "text": f"⚡ *[SPARKLE.NET RevOps]* Real-Time Gemini Reasoning Alert\n\n"
                 f"*Event Title:*\n{intent}\n\n"
@@ -41,9 +34,5 @@ async def dispatch_gemini_slack_alert(intent: str, status: str, rigs_score: str)
                 f"{reasoning_output}"
     }
 
-    try:
-        async with httpx.AsyncClient(timeout=15.0) as client:
-            resp = await client.post(slack_webhook, json=slack_message)
-            print(f"Slack webhook response status: {resp.status_code}, body: {resp.text}")
-    except Exception as e:
-        print(f"Slack Dispatch Error: {str(e)}")
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        await client.post(slack_webhook, json=slack_message)
