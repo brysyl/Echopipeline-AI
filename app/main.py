@@ -105,7 +105,7 @@ def control_room_dashboard():
                 </div>
                 <div class="flex items-center space-x-3">
                     <span class="px-3 py-1 text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full">Alexa+ Bridge Active</span>
-                    <a <button onclick="fetch(window.location.origin + '/api/action/trigger', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({intent_string: 'Dashboard Navbar Grok Live Trigger'})}).then(res => res.json()).then(data => console.log('Dispatched:', data)).catch(e => console.error(e))" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-1.5 rounded transition shadow-sm">
+                    <a <button onclick="fetch(window.location.origin + '/api/action/trigger', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({intent_string: 'Dashboard Navbar Gemini Live Trigger'})}).then(res => res.json()).then(data => console.log('Dispatched:', data)).catch(e => console.error(e))" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-1.5 rounded transition shadow-sm">
             🚀 Trigger Gemini-Slack
         </button>
         <a href="/docs" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition-colors border border-slate-700">OpenAPI Docs</a>
@@ -326,13 +326,13 @@ async def handle_alexa_intent(body: AlexaWebhookBody):
 
 @app.post("/api/action/trigger")
 async def trigger_gemini_slack_action(payload: dict = None):
-    intent = payload.get("intent_string", "Dashboard Manual Grok Live Trigger") if payload else "Dashboard Manual Grok Live Trigger"
+    intent = payload.get("intent_string", "Dashboard Manual Gemini Live Trigger") if payload else "Dashboard Manual Gemini Live Trigger"
     try:
         await dispatch_gemini_slack_alert(
             intent=intent,
             status="SUCCESS",
             rigs_score="RIGS-A1 (Fully Verified)"
         )
-        return {"status": "success", "message": "Live Grok & Slack dispatch executed successfully!"}
+        return {"status": "success", "message": "Live Gemini & Slack dispatch executed successfully!"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
