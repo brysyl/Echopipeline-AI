@@ -1,3 +1,5 @@
+from fastapi import BackgroundTasks
+from app.services.ai_slack_bus import dispatch_gemini_slack_alert
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
