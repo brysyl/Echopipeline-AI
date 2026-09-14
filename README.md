@@ -16,12 +16,18 @@ Transform unstructured sales conversations into structured CRM actions instantly
 ### High-Level Data Flow
 
 ```
-┌──────────────────────────��──────────────────────────────────────┐
+┌─────────────────────────────────────────────────────────────────┐
 │                      Amazon Alexa+ Device                       │
 │                   (Ambient Sales Conversation)                  │
 └────────────────────────┬────────────────────────────────────────┘
+                         │ Voice Stream / JSON-RPC
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                       AWS Lambda Router                         │
+│             (AWS Builder Integration / Payload Routing)         │
+└────────────────────────┬────────────────────────────────────────┘
                          │ HTTPx AsyncClient
-                         │ JSON-RPC 2.0 Payload
+                         │ MCP Payload Forwarding
                          ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                   EchoPipeline FastAPI Gateway                  │
@@ -29,29 +35,30 @@ Transform unstructured sales conversations into structured CRM actions instantly
 │                      spec 2025-11-25                            │
 │                                                                 │
 │  Friction Logger Middleware                                     │
-│  ↓ Validates headers, protocol version, latency                │
-│  ↓ Auto-persists violations → friction_logs.json               │
+│  ↓ Validates headers, protocol version, latency                 │
+│  ↓ Auto-persists violations → friction_logs.json                │
 │                                                                 │
-│  POST /mcp/stream                                              │
+│  POST /mcp/stream                                               │
 │  ├─ initialize      (protocol handshake)                        │
-│  ├─ tools/list      (discover available tools)                 │
-│  └─ tools/call      (execute RevOps actions)                   │
-└──┬──────────────────────────────────────────────────────────┬──┘
+│  ├─ tools/list      (discover available tools)                  │
+│  └─ tools/call      (execute RevOps actions)                    │
+└──┬──────────────────────────────────────────────────────────┬───┘
    │                                                          │
-   ▼ (Parse parameters via LLM)                   ▼ (Store results)
-┌────────────────────────────┐         ┌──────────────────────┐
-│  LLM Parameter Parser      │         │ Supabase CRM (or     │
-│                            │         │ MockCRM for demo)    │
-│ • AWS Bedrock (primary)    │         │                      │
-│ • Groq API (fallback)      │         │ • Deals              │
-│ • Regex extraction (final) │         │ • Leads              │
-│                            │         │ • Risk Logs          │
-│ Extracts:                  │         │ • Pipeline Metrics   │
-│ • Deal Stage mutants       │         │                      │
-│ • Risk Severity (1-5)      │         └──────────────────────┘
-│ • Lead metadata            │
-│ • RIGS health scores       │
-└────────────────────────────┘
+   ▼ (Parse parameters via LLM)                               ▼ (Store & Alert)
+┌──────────────────────────────┐       ┌──────────────────────────────┐
+│ LLM Parameter Parser         │       │ PostgreSQL (via Asyncpg)     │
+│                              │       │                              │
+│ • Gemini 3.6 Flash (Primary) │       │ • Pipeline Deals & Leads     │
+│ • AWS Bedrock (Secondary)    │       │ • Escrow Metrics             │
+│ • Regex Extraction (Final)   │       │ • RIGS Risk Logs             │
+│                              │       └──────────────┬───────────────┘
+│ Extracts:                    │                      │ Real-time Webhook
+│ • Deal Stage Mutants         │                      ▼
+│ • Risk Severity (1-5)        │       ┌──────────────────────────────┐
+│ • Lead Metadata              │       │ Slack Webhook API            │
+│ • RIGS Health Scores         │       │ (Block Kit Telemetry Alerts) │
+└──────────────────────────────┘       └──────────────────────────────┘
+
 ```
 
 ### MCP Tools Ecosystem
