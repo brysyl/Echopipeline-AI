@@ -522,7 +522,7 @@ echopipeline-ai/
 - **Ambient Voice Capture**: Designed for hands-free, conversation-native operation
 - **RevOps Automation**: 4 production-grade tools for deal/risk/metrics/lead management
 - **Zero-Latency Processing**: Async throughout, <100ms typical response times
-- **Smart Fallbacks**: LLM → Groq → Regex extraction ensures reliability in any environment
+- **Smart Fallbacks**: LLM → Gemini→ Regex extraction ensures reliability in any environment
 
 ### 🔒 Protocol Compliance Mastery
 - **MCP Spec 2025-11-25**: Full adherence to JSON-RPC 2.0, tool schemas, error codes
