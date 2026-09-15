@@ -537,7 +537,7 @@ echopipeline-ai/
 - **Observable**: `/health`, `/api/status`, `/api/friction-logs` endpoints for monitoring
 
 ### 🧠 Intelligent Extraction
-- **Multi-Provider LLM**: AWS Bedrock (primary) + Groq (fallback) + regex (final)
+- **Multi-Provider LLM**: AWS Bedrock (primary) + Gemini (fallback) + regex (final)
 - **RIGS Scoring**: Proprietary risk/intent/growth/stakeholder health algorithm
 - **Confidence Scores**: Lead ingestion produces 0.0-1.0 confidence metadata
 - **Ambient Parsing**: Converts voice transcription → structured CRM mutations
