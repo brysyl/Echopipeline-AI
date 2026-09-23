@@ -251,7 +251,7 @@ def control_room_dashboard():
     </html>
     """
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 def health_check():
     return {"status": "healthy", "service": "EchoPipeline-AI", "protocol": "MCP Streamable HTTP"}
 
