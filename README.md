@@ -217,7 +217,7 @@ MCP Stream Endpoint (/mcp/stream)
   - `source`: Lead source tag (ambient_notes, call_recording, etc.)
   - `created_by_session`: Alexa+ session ID
 - **LLM Processing**:
-  - AWS Bedrock (primary) or Groq API (fallback) extracts structured data
+  - AWS Bedrock (primary) or Gemini API (fallback) extracts structured data
   - Regex fallback for zero-dependency operation
   - Confidence score generated (0.0-1.0)
 - **Processing**: Duplicate detection via email/company, enrichment, outreach workflow triggering
@@ -441,7 +441,7 @@ pytest tests/test_mcp_stream.py --cov=app --cov-report=html
    ```
    SUPABASE_URL=https://your-project.supabase.co
    SUPABASE_KEY=eyJhbGciOiJIUzI1NiIs...
-   GROQ_API_KEY=gsk_your_api_key...
+   GEMINI_API_KEY=your_api_key...
    ```
 4. **Deploy** — Auto-builds Docker image and serves on free tier
 
@@ -481,8 +481,8 @@ docker run -p 8000:8000 \
 | `SUPABASE_URL` | *(none)* | Supabase project URL |
 | `SUPABASE_KEY` | *(none)* | Supabase service key |
 | `ENABLE_BEDROCK` | `true` | Enable AWS Bedrock LLM |
-| `ENABLE_GROQ` | `true` | Enable Groq API fallback |
-| `GROQ_API_KEY` | *(none)* | Groq API key |
+| `ENABLE_GEMINI` | `true` | Enable Gemini API fallback |
+| `GEMINI_API_KEY` | *(none)* | Gemini API key |
 | `AWS_REGION` | `us-west-2` | AWS region for Bedrock |
 | `PARSER_FALLBACK_ONLY` | `false` | Use only regex extraction (no LLM) |
 
